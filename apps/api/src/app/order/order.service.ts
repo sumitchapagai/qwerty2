@@ -276,7 +276,7 @@ export class OrderService {
     where.SymbolProfile = {
       AND: symbolProfileConditions
     };
-    const searchQuery = filters.find(({ type }) => {
+    const searchQuery = filters?.find(({ type }) => {
       return type === 'SEARCH_QUERY';
     })?.id;
     if (searchQuery) {
