@@ -276,6 +276,24 @@ export class OrderService {
     ];
     const where: Prisma.OrderWhereInput = { userId };
 
+    let symbolProfileConditions: Prisma.SymbolProfileWhereInput[] = [];
+    where.SymbolProfile = {
+      AND: symbolProfileConditions
+    };
+    const searchQuery = filters?.find(({ type }) => {
+      return type === 'SEARCH_QUERY';
+    })?.id;
+    if (searchQuery) {
+      symbolProfileConditions.push({
+        OR: [
+          { id: { mode: 'insensitive', contains: searchQuery } },
+          { isin: { mode: 'insensitive', contains: searchQuery } },
+          { name: { mode: 'insensitive', contains: searchQuery } },
+          { symbol: { mode: 'insensitive', contains: searchQuery } }
+        ]
+      });
+    }
+
     if (endDate || startDate) {
       where.AND = [];
 
@@ -309,7 +327,7 @@ export class OrderService {
     }
 
     if (filtersByAssetClass?.length > 0) {
-      where.SymbolProfile = {
+      symbolProfileConditions.push({
         OR: [
           {
             AND: [
@@ -334,7 +352,7 @@ export class OrderService {
             }
           }
         ]
-      };
+      });
     }
 
     if (filtersByTag?.length > 0) {
