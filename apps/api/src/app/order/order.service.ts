@@ -271,6 +271,7 @@ export class OrderService {
     userId: string;
     withExcludedAccounts?: boolean;
   }): Promise<Activities> {
+    console.time('------ OrderService.getOrders');
     let orderBy: Prisma.Enumerable<Prisma.OrderOrderByWithRelationInput> = [
       { date: 'asc' }
     ];
@@ -429,6 +430,8 @@ export class OrderService {
         )
       };
     });
+
+    console.timeEnd('------ OrderService.getOrders');
 
     return { activities, count };
   }
